@@ -1,6 +1,8 @@
 import os
 import shutil
 import zipfile
+import re
+import hashlib
 
 def copyFile(src, dest):
     try:
@@ -12,8 +14,30 @@ def copyFile(src, dest):
     except IOError as e:
         print('Error: %s' % e.strerror)
 
+def getBMCFWInfo(fwName):
+    bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
+    bmcFWDatePattern = b'\x46\x57\x5f\x44\x41\x54\x45'
+
+    print('------------------------------------------------------------------')
+    print(fwName)
+
+    with open(fwName, "rb") as fwVer:
+        verSearch = re.search(bmcFWVersionPattern, fwVer.read())
+        fwVer.close()
+
+    print("BMC Firmware Version:", verSearch.group())
+    print("Firmware Version Offset:", hex(verSearch.start()))
+
+    with open(fwName, "rb") as fwDate:
+        verSearch = re.search(bmcFWDatePattern, fwDate.read())
+        fwVer.close()
+
+    print("BMC Firmware Date:", verSearch.group())
+    print("Firmware Date Offset:", hex(verSearch.start()))
+
 # Get current path
 CBOLD = '\33[1m'
+CITALIC = '\33[3m'
 CURL = '\33[4m'
 
 CBLACK  = '\33[30m'
@@ -34,23 +58,36 @@ rootDir = os.getcwd()
 pendingFolder = rootDir + '/pending/'
 outputFolder = rootDir + '/output/'
 
+bmcRomImgFolder = rootDir + '/bmcRomImg/'
+bmcROMIma = 'rom.ima'
+bmcROMImaEnc = 'rom.ima_enc'
+# bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
+# bmcFWDatePattern = b'\x46\x57\x5f\x44\x41\x54\x45'
+
 print ("Getting current path: " + rootDir)
 print ("pending folder path: " + pendingFolder)
 print ("output folder path: " + outputFolder)
+print(CEND + '\r\n')
 
-# Go through all pending folder with .zip extension and list all of them for user's choice.
-print(CBOLD + 'In the folder ' + pendingFolder + ', you have the following pending zip file:')
-print('---------------------------')
+#
+# Go through all pending folders with .zip extension and list all of them for user's choice.
+#
+print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
+print('------------------------------------------------------------------------------------------------------------')
+print(CBOLD + CYELLOW)
 for root, dirs, files in os.walk(pendingFolder):
-   for name in files:
+   # for name in files:
       print(files)
 
 print(CEND + '\r\n')
+
 # Choose a zip file that users want to update.
 pendingZIPFile = input('Please enter the project neme that you would like to update:')
 print('Your choise is: ' + pendingZIPFile)
 
+#
 # Decompress the Release folder that users choose.
+#
 try:
     releaseFolderZip = zipfile.ZipFile(pendingFolder + pendingZIPFile + '.zip')
 
@@ -58,9 +95,51 @@ try:
     releaseFolderZip.extractall(outputFolder)
 
     releaseFolderZip.close()
+    print('Decompression is finished. ' + '\r\n')
 except:
-    print(CRED + CBLINK + 'Error! Please check your pending again!'+ CEND)
+    print(CRED + CBLINK + 'Error! Please check your pending again!' + CEND)
 
-# Calculate ROM's CRC
+#
+# Collect rom.ima information
+#
+# Search Firmware Version in BMC ROM image
 
-# Calculate the CRC of the zip file.
+# get rom.ima information
+print('Get BMC firmware information...')
+getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
+
+# get rom.ima_enc information
+getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
+print('\r\n')
+
+# getBMCFWInfo(bmcROMImaEncPathName)
+
+#with open(bmcRomImgFolder + bmcROMIma, "rb") as fwVer:
+#    verSearch = re.search(bmcFWVersionPattern, fwVer.read())
+#    fwVer.close()
+
+#print("BMC Firmware Version:", verSearch .group())
+#print("Offset:", verSearch .start())
+
+# Search Firmware Date in BMC ROM image
+#with open(bmcRomImgFolder + bmcROMIma, "rb") as fwDate:
+#    dateSearch = re.search(bmcFWDatePattern, fwDate.read())
+#    fwDate.close()
+
+#print("BMC Firmware Date:", dateSearch .group())
+#print('Offset: ' + hex(dateSearch .start()))
+print(CEND + '\r\n')
+
+# Calculate MD5 checksum of rom.aim
+
+# Calculate the MD5 checksum of the zip file.
+# filename = "my_data.txt"
+# m = hashlib.md5()
+
+# with open(pendingZIPFile, "rb") as f:
+  # 分批讀取檔案內容，計算 MD5 雜湊值
+  #for chunk in iter(lambda: f.read(4096), b""):
+  #  m.update(chunk)
+
+# h = m.hexdigest()
+# print(h)
