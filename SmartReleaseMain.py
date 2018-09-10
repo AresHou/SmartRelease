@@ -4,15 +4,7 @@ import zipfile
 import re
 import hashlib
 
-def copyFile(src, dest):
-    try:
-        shutil.copy(src, dest)
-    # eg. src and dest are the same file
-    except shutil.Error as e:
-        print('Error: %s' % e)
-    # eg. source or destination doesn't exist
-    except IOError as e:
-        print('Error: %s' % e.strerror)
+from shutil import copyfile
 
 def getBMCFWInfo(fwName):
     bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
@@ -35,8 +27,7 @@ def getBMCFWInfo(fwName):
         fwDate.close()
     print(str(firmwareDate))
 
-    # print("BMC Firmware Date:", verSearch.group())
-    # print("Firmware Date Offset:", hex(verSearch.start()))
+    return str(firmwareVersion)
 
 # Get current path
 CBOLD = '\33[1m'
@@ -60,12 +51,10 @@ CEND = '\033[0m'
 rootDir = os.getcwd()
 pendingFolder = rootDir + '/pending/'
 outputFolder = rootDir + '/output/'
-
 bmcRomImgFolder = rootDir + '/bmcRomImg/'
+
 bmcROMIma = 'rom.ima'
 bmcROMImaEnc = 'rom.ima_enc'
-# bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
-# bmcFWDatePattern = b'\x46\x57\x5f\x44\x41\x54\x45'
 
 print ("Getting current path: " + rootDir)
 print ("pending folder path: " + pendingFolder)
@@ -87,6 +76,9 @@ print(CEND + '\r\n')
 # Choose a zip file that users want to update.
 pendingZIPFile = input('Please enter the project neme that you would like to update:')
 print('Your choise is: ' + pendingZIPFile)
+waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
+print('The folder that you want to update:')
+print(waitForUpdate_Folder)
 
 #
 # Decompress the Release folder that users choose.
@@ -108,14 +100,37 @@ except:
 # Search Firmware Version in BMC ROM image
 
 # get rom.ima information
-print('Get BMC firmware information...')
-getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
+print('Get BMC firmware information from NEW ROM image...')
+newRomImgInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
+# print(newRomImgInfo)
 
 # get rom.ima_enc information
-getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
+newRomImgEncInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
 print('\r\n')
 
+print('Get BMC firmware information from OLD ROM image...')
+oldRomImgInfo = getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
+# print(oldRomImgInfo)
+
 # getBMCFWInfo(bmcROMImaEncPathName)
+
+# Compare if firmware version is the same for NEW and OLD one
+if newRomImgInfo == oldRomImgInfo :
+    print('\r\n')
+    print(CRED + 'Exit! The BMC firmware version on NEW and OLD birany are the same!' + CEND)
+    print('New: ' + newRomImgInfo + '\r\n' + 'Old: ' + oldRomImgInfo)
+    exit()
+
+# copy new BMC ROM image to the folder that users want to compress with zip
+src = bmcRomImgFolder
+dest = waitForUpdate_Folder
+print('\r\n')
+try:
+    print('Copy new ROM images to updated folder: ' + dest)
+    shutil.copy(src + bmcROMIma, dest)
+    shutil.copy(src + bmcROMImaEnc, dest)
+except:
+    print('Failed to copy!')
 
 #with open(bmcRomImgFolder + bmcROMIma, "rb") as fwVer:
 #    verSearch = re.search(bmcFWVersionPattern, fwVer.read())
