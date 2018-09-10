@@ -23,17 +23,20 @@ def getBMCFWInfo(fwName):
 
     with open(fwName, "rb") as fwVer:
         verSearch = re.search(bmcFWVersionPattern, fwVer.read())
+        fwVer.seek(int(verSearch.start()))
+        firmwareVersion=fwVer.read(18)
         fwVer.close()
-
-    print("BMC Firmware Version:", verSearch.group())
-    print("Firmware Version Offset:", hex(verSearch.start()))
+    print(str(firmwareVersion))
 
     with open(fwName, "rb") as fwDate:
-        verSearch = re.search(bmcFWDatePattern, fwDate.read())
-        fwVer.close()
+        dateSearch = re.search(bmcFWDatePattern, fwDate.read())
+        fwDate.seek(int(dateSearch.start()))
+        firmwareDate = fwDate.read(19)
+        fwDate.close()
+    print(str(firmwareDate))
 
-    print("BMC Firmware Date:", verSearch.group())
-    print("Firmware Date Offset:", hex(verSearch.start()))
+    # print("BMC Firmware Date:", verSearch.group())
+    # print("Firmware Date Offset:", hex(verSearch.start()))
 
 # Get current path
 CBOLD = '\33[1m'
