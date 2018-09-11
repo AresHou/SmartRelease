@@ -77,7 +77,7 @@ print(CEND + '\r\n')
 pendingZIPFile = input('Please enter the project neme that you would like to update:')
 print('Your choise is: ' + pendingZIPFile)
 waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
-print('The folder that you want to update:')
+print('The folder that you want to release:')
 print(waitForUpdate_Folder)
 
 #
@@ -105,7 +105,7 @@ newRomImgInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
 # print(newRomImgInfo)
 
 # get rom.ima_enc information
-newRomImgEncInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
+# newRomImgEncInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
 print('\r\n')
 
 print('Get BMC firmware information from OLD ROM image...')
@@ -115,7 +115,7 @@ oldRomImgInfo = getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
 # getBMCFWInfo(bmcROMImaEncPathName)
 
 # Compare if firmware version is the same for NEW and OLD one
-if newRomImgInfo == oldRomImgInfo :
+if newRomImgInfo == oldRomImgInfo:
     print('\r\n')
     print(CRED + 'Exit! The BMC firmware version on NEW and OLD birany are the same!' + CEND)
     print('New: ' + newRomImgInfo + '\r\n' + 'Old: ' + oldRomImgInfo)
@@ -131,6 +131,14 @@ try:
     shutil.copy(src + bmcROMImaEnc, dest)
 except:
     print('Failed to copy!')
+
+# Rename formal release folder
+print(CGREEN)
+print('The previous release folder: ' + pendingZIPFile )
+print('New version of BMC firmware: ' + newRomImgInfo)
+print(CEND)
+formalReleaseFolderName = input('Please enter the name of the Formal Release Folder: (Project Name + Firmware Version)')
+os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
 #with open(bmcRomImgFolder + bmcROMIma, "rb") as fwVer:
 #    verSearch = re.search(bmcFWVersionPattern, fwVer.read())
