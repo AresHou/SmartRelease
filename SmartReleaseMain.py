@@ -3,6 +3,7 @@ import shutil
 import zipfile
 import re
 import hashlib
+import webbrowser
 
 from shutil import copyfile
 
@@ -28,6 +29,28 @@ def getBMCFWInfo(fwName):
     print(str(firmwareDate))
 
     return str(firmwareVersion)
+
+def read_chunks(file_handle, chunk_size=8192):
+    while True:
+        data = file_handle.read(chunk_size)
+        if not data:
+            break
+        yield data
+
+def md5(file_handle):
+    hasher = hashlib.md5()
+    for chunk in read_chunks(file_handle):
+        hasher.update(chunk)
+    return hasher.hexdigest()
+
+def getM5Checksum(fileName):
+    try:
+        with open(fileName, 'rb') as f:
+            hash_string_Romima = md5(f)
+    except IOError as e:
+        print('ERROR! Get MD5 checksum has something wrong.')
+
+    return hash_string_Romima
 
 # Get current path
 CBOLD = '\33[1m'
@@ -140,32 +163,20 @@ print(CEND)
 formalReleaseFolderName = input('Please enter the name of the Formal Release Folder: (Project Name + Firmware Version)')
 os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
-#with open(bmcRomImgFolder + bmcROMIma, "rb") as fwVer:
-#    verSearch = re.search(bmcFWVersionPattern, fwVer.read())
-#    fwVer.close()
-
-#print("BMC Firmware Version:", verSearch .group())
-#print("Offset:", verSearch .start())
-
-# Search Firmware Date in BMC ROM image
-#with open(bmcRomImgFolder + bmcROMIma, "rb") as fwDate:
-#    dateSearch = re.search(bmcFWDatePattern, fwDate.read())
-#    fwDate.close()
-
-#print("BMC Firmware Date:", dateSearch .group())
-#print('Offset: ' + hex(dateSearch .start()))
 print(CEND + '\r\n')
 
-# Calculate MD5 checksum of rom.aim
+# Calculate MD5 checksum for rom.ima and rom.ima_enc
+RomimaMD5ChkSum = getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
+RomimaEncMD5ChkSum = getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMImaEnc)
+
+print('rom.ima with MD5 checksum: ' + RomimaMD5ChkSum)
+print('rom.ima_enc with MD5 checksum: ' + RomimaEncMD5ChkSum)
+
+# fill in related release information to ReleaseNote.ext
+
+# Open text editor
+webbrowser.open(outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt')
+
+# Compress Formal Release Folder
 
 # Calculate the MD5 checksum of the zip file.
-# filename = "my_data.txt"
-# m = hashlib.md5()
-
-# with open(pendingZIPFile, "rb") as f:
-  # 分批讀取檔案內容，計算 MD5 雜湊值
-  #for chunk in iter(lambda: f.read(4096), b""):
-  #  m.update(chunk)
-
-# h = m.hexdigest()
-# print(h)
