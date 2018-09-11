@@ -1,9 +1,11 @@
 import os
+import sys
 import shutil
 import zipfile
 import re
 import hashlib
 import webbrowser
+import zlib
 
 from shutil import copyfile
 
@@ -27,7 +29,6 @@ def getBMCFWInfo(fwName):
         firmwareDate = fwDate.read(19)
         fwDate.close()
     print(str(firmwareDate))
-
     return str(firmwareVersion)
 
 def read_chunks(file_handle, chunk_size=8192):
@@ -49,8 +50,13 @@ def getM5Checksum(fileName):
             hash_string_Romima = md5(f)
     except IOError as e:
         print('ERROR! Get MD5 checksum has something wrong.')
-
     return hash_string_Romima
+
+def getChecksum32(fileName):
+    prev = 0
+    for eachLine in open(fileName,"rb"):
+        prev = zlib.crc32(eachLine, prev)
+    return "%X"%(prev & 0xFFFFFFFF)
 
 # Get current path
 CBOLD = '\33[1m'
@@ -165,10 +171,13 @@ os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
 print(CEND + '\r\n')
 
+# Calculate checksum-32 for rom.ima
+RomimaChkSum32 = getChecksum32(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
+print('rom.ima with checksum-32: ' + RomimaChkSum32)
+
 # Calculate MD5 checksum for rom.ima and rom.ima_enc
 RomimaMD5ChkSum = getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
 RomimaEncMD5ChkSum = getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMImaEnc)
-
 print('rom.ima with MD5 checksum: ' + RomimaMD5ChkSum)
 print('rom.ima_enc with MD5 checksum: ' + RomimaEncMD5ChkSum)
 
