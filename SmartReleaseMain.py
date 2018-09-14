@@ -5,9 +5,8 @@ import string
 import subprocess
 import funModule
 
-
-
 from datetime import date
+from subprocess import call
 
 CBOLD = '\33[1m'
 CITALIC = '\33[3m'
@@ -34,6 +33,7 @@ def main():
     outputFolder = rootDir + '/output/'
     bmcRomImgFolder = rootDir + '/bmcRomImg/'
     releaseNoteTemplateFolder = rootDir + '/releaseNoteTemplate/'
+    EDITOR = os.environ.get('EDITOR', 'gedit')
 
     bmcROMIma = 'rom.ima'
     bmcROMImaEnc = 'rom.ima_enc'
@@ -50,14 +50,20 @@ def main():
         shutil.rmtree(outputFolder)
 
     #
+    # Check if folder pending is empty.
+    #
+    if len(os.listdir(pendingFolder)) == 0:
+        print(CRED + 'ERROR! Folder \"pending\" is empty' + CEND)
+        exit()
+
+    #
     # Go through all pending folders with .zip extension and list all of them for user's choice.
     #
     print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
     print('------------------------------------------------------------------------------------------------------------')
     print(CBOLD + CYELLOW)
     for root, dirs, files in os.walk(pendingFolder):
-       # for name in files:
-          print(files)
+        print(files)
 
     print(CEND + '\r\n')
 
@@ -213,9 +219,11 @@ def main():
     os.rename(releaseNoteTemplateFolder + tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
     shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
 
+    print('Please fill in and save related information to ReleaseNote.txt.')
+    print('After that. the formael release folder with extension .zip will be placed to the following path.' + '\r\n' + formalRelFolderPath)
 
     # Open text editor
-    # webbrowser.open(FormalReleaseNote)
+    call([EDITOR, releaseNoteTemplateFolder + 'ReleaseNote.txt'])
 
     #
     # Compress Formal Release Folder
