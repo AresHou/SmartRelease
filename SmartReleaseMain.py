@@ -1,10 +1,10 @@
 import os
 import shutil
 import zipfile
-import re
 import string
-import webbrowser
+import subprocess
 import funModule
+
 
 
 from datetime import date
@@ -45,8 +45,9 @@ def main():
     print ("output folder path: " + outputFolder)
     print(CEND + '\r\n')
 
-    # Remove all of folders in output folder.
-    shutil.rmtree(outputFolder)
+    # Check if folder output exists. If it does, remove output folder.
+    if os.path.isdir(outputFolder):
+        shutil.rmtree(outputFolder)
 
     #
     # Go through all pending folders with .zip extension and list all of them for user's choice.
@@ -110,6 +111,8 @@ def main():
         print('\r\n')
         print(CRED + 'Exit! The BMC firmware version on NEW and OLD binary are the same!' + CEND)
         print('New: ' + newRomImgVer + '\r\n' + 'Old: ' + oldRomImgVer)
+        # Remove all of folders in output folder.
+        shutil.rmtree(outputFolder)
         exit()
 
     #
@@ -195,12 +198,29 @@ def main():
         print(CRED + 'Exit! Search and replace Release Note has something wrong!' + CEND)
         exit()
 
+    FormalReleaseNote = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
+
+    formalRelFile = open(FormalReleaseNote)
+    tempRelFile = open(relNoteFileName, 'a+')
+
+    shutil.copyfileobj(formalRelFile, tempRelFile)
+
+    tempRelFile.close()
+    formalRelFile.close()
+
+    formalRelFolderPath = outputFolder + formalReleaseFolderName
+
+    os.rename(releaseNoteTemplateFolder + tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
+    shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
+
+
     # Open text editor
-    # webbrowser.open(outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt')
+    # webbrowser.open(FormalReleaseNote)
 
     #
     # Compress Formal Release Folder
     #
+    shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
 
 
 if __name__ == '__main__':
