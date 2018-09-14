@@ -1,8 +1,11 @@
 import os
 import shutil
 import zipfile
+import re
+import string
 import webbrowser
 import funModule
+
 
 from datetime import date
 
@@ -41,6 +44,9 @@ def main():
     print ("pending folder path: " + pendingFolder)
     print ("output folder path: " + outputFolder)
     print(CEND + '\r\n')
+
+    # Remove all of folders in output folder.
+    shutil.rmtree(outputFolder)
 
     #
     # Go through all pending folders with .zip extension and list all of them for user's choice.
@@ -121,21 +127,30 @@ def main():
         exit()
 
     #
-    # Rename formal release folder
-    #
-    formalReleaseFolderName = input(CBLUE + 'Enter the name of the Formal Release Folder: (Project Name + Firmware Version)' + CEND)
-    os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
-
-    #
-    # Convert new Firmware Version to normal expression.
+    # Convert new Firmware Version to human readable.
     #
     try:
         romVerIndex = newRomImgVer.index('=')
         RomVerHumanReadable = newRomImgVer[romVerIndex + 1:-1]
 
+        # Rename formal release folder
+        verIndex = pendingZIPFile.index('v')
+        prjName = pendingZIPFile[:verIndex + 1]
+        prjName = prjName + '0'
+        formalReleaseFolderName = prjName + RomVerHumanReadable
+
+        for c in string.punctuation:
+            formalReleaseFolderName = formalReleaseFolderName.replace(c, "")
+        # print('The full release folder name will be: ' + formalReleaseFolderName)
+
+        # formalReleaseFolderName = formalReleaseFolderName[0:-2]
+        # print('The new release folder will be: ' + formalReleaseFolderName)
+
+        os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
+
         print(CGREEN)
         print('The previous release folder: ' + pendingFolder + pendingZIPFile)
-        print('The current release folder: ' + formalReleaseFolderName)
+        print('The formal release folder  : ' + outputFolder + formalReleaseFolderName)
         print('New version of BMC firmware: ' + RomVerHumanReadable)
         print(CEND)
     except:
@@ -151,14 +166,14 @@ def main():
     # Calculate checksum-32 for rom.ima
     #
     RomimaChkSum32 = funModule.getChecksum32(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
-    print(CGREEN + 'rom.ima with checksum-32: ' + RomimaChkSum32)
+    print(CGREEN + 'rom.ima with checksum-32     : ' + RomimaChkSum32)
 
     #
     # Calculate MD5 checksum for rom.ima and rom.ima_enc
     #
     RomimaMD5ChkSum = funModule.getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
     RomimaEncMD5ChkSum = funModule.getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMImaEnc)
-    print('rom.ima with MD5 checksum: ' + RomimaMD5ChkSum)
+    print('rom.ima with MD5 checksum    : ' + RomimaMD5ChkSum)
     print('rom.ima_enc with MD5 checksum: ' + RomimaEncMD5ChkSum)
     print(CEND)
 
@@ -175,7 +190,7 @@ def main():
 
     relNoteFileName = releaseNoteTemplateFolder + tempReleaseFile
     # Search and replace related information
-    result = funModule.updateRelNote(relNoteFileName, newRomImgVer, today, RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
+    result = funModule.updateRelNote(relNoteFileName, RomVerHumanReadable, today, RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
     if result == 0:
         print(CRED + 'Exit! Search and replace Release Note has something wrong!' + CEND)
         exit()

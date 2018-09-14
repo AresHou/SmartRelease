@@ -59,7 +59,7 @@ def updateRelNote(fileName, newImgVer, date, ImgChkSum_32, ImgChkSum_MD5, ImgEnc
 
     with open(fileName, 'r+') as file:
         lines = file.readlines()
-        replaceTitleVer = '        MF5A AST2500(A2) BMC FW Release Version' + newImgVer + '\n'
+        replaceTitleVer = '        MF5A AST2500(A2) BMC FW Release Version ' + newImgVer + '\n'
         replaceFWVer = 'Version: ' + newImgVer + '\n'
         replaceDate = 'Release Date: ' + date + '\n'
         replaceRomImachk32 = '1. rom.ima with checksum          : ' + ImgChkSum_32 + '\n'
