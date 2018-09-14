@@ -1,0 +1,13 @@
+=====================================================================
+=====================================================================
+AMI Subversion Revision: AMI SPX RR11.5
+DMTF Redfish Specification version: 1.1.0
+Api Version: 2.1.0
+Code Based: 3.85
+[Utility]:
+1. Yafuflash2 (version 4.16.17)
+[Firmware Images]:
+
+[Changed]:
+
+[Bug Fixed]:

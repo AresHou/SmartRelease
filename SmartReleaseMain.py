@@ -4,6 +4,8 @@ import zipfile
 import webbrowser
 import funModule
 
+from datetime import date
+
 CBOLD = '\33[1m'
 CITALIC = '\33[3m'
 CURL = '\33[4m'
@@ -28,9 +30,12 @@ def main():
     pendingFolder = rootDir + '/pending/'
     outputFolder = rootDir + '/output/'
     bmcRomImgFolder = rootDir + '/bmcRomImg/'
+    releaseNoteTemplateFolder = rootDir + '/releaseNoteTemplate/'
 
     bmcROMIma = 'rom.ima'
     bmcROMImaEnc = 'rom.ima_enc'
+    ReleaseNoteTemplate = 'ReleaseNoteTemplate.txt'
+    tempReleaseFile = 'releaseNote_temp.txt'
 
     print ("Getting current path: " + rootDir)
     print ("pending folder path: " + pendingFolder)
@@ -49,7 +54,9 @@ def main():
 
     print(CEND + '\r\n')
 
+    #
     # Choose a zip file that users want to update.
+    #
     pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
     print('Your choise is: ' + pendingZIPFile)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
@@ -75,30 +82,33 @@ def main():
     # Collect rom.ima information
     #
 
-    # Search Firmware Version in BMC ROM image
-    # get rom.ima information
+    # Search Firmware Version in BMC ROM image and get rom.ima information
     print('Get BMC firmware information from NEW ROM image...')
-    newRomImgInfo = funModule.getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
-    # print(newRomImgInfo)
+    newRomImgVer = funModule.getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
+    # print(newRomImgVer)
 
     # get rom.ima_enc information
-    # newRomImgEncInfo = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
+    # newRomImgEncVer = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
     print('\r\n')
 
     print('Get BMC firmware information from OLD ROM image...')
-    oldRomImgInfo = funModule.getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
-    # print(oldRomImgInfo)
+    oldRomImgVer = funModule.getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
+    # print(oldRomImgVer)
 
     # getBMCFWInfo(bmcROMImaEncPathName)
 
+    #
     # Compare if firmware version is the same for NEW and OLD one
-    if newRomImgInfo == oldRomImgInfo:
+    #
+    if newRomImgVer == oldRomImgVer:
         print('\r\n')
         print(CRED + 'Exit! The BMC firmware version on NEW and OLD birany are the same!' + CEND)
-        print('New: ' + newRomImgInfo + '\r\n' + 'Old: ' + oldRomImgInfo)
+        print('New: ' + newRomImgVer + '\r\n' + 'Old: ' + oldRomImgVer)
         exit()
 
+    #
     # copy new BMC ROM image to the folder that users want to compress with zip
+    #
     src = bmcRomImgFolder
     dest = waitForUpdate_Folder
     print('\r\n')
@@ -108,36 +118,59 @@ def main():
         shutil.copy(src + bmcROMImaEnc, dest)
     except:
         print('Failed to copy!')
+        exit()
 
+    #
     # Rename formal release folder
-    print(CGREEN)
-    print('The previous release folder: ' + pendingZIPFile )
-    print('New version of BMC firmware: ' + newRomImgInfo)
-    print(CEND)
+    #
     formalReleaseFolderName = input(CBLUE + 'Enter the name of the Formal Release Folder: (Project Name + Firmware Version)' + CEND)
     os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
+    print(CGREEN)
+    print('The previous release folder: ' + pendingFolder + pendingZIPFile)
+    print('The current release folder: ' + formalReleaseFolderName)
+    print('New version of BMC firmware: ' + newRomImgVer)
+    print(CEND)
     print(CEND + '\r\n')
 
+    #
     # Calculate checksum-32 for rom.ima
+    #
     RomimaChkSum32 = funModule.getChecksum32(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
     print('rom.ima with checksum-32: ' + RomimaChkSum32)
 
+    #
     # Calculate MD5 checksum for rom.ima and rom.ima_enc
+    #
     RomimaMD5ChkSum = funModule.getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
     RomimaEncMD5ChkSum = funModule.getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMImaEnc)
     print('rom.ima with MD5 checksum: ' + RomimaMD5ChkSum)
     print('rom.ima_enc with MD5 checksum: ' + RomimaEncMD5ChkSum)
 
+    #
     # fill in related release information to ReleaseNote.ext
+    #
+    src_relNote = releaseNoteTemplateFolder
+    dest_relNote = releaseNoteTemplateFolder
+    shutil.copy(src_relNote + ReleaseNoteTemplate, dest_relNote + tempReleaseFile)
+
+    # Get date
+    today = str(date.today())
+    # print('Today is : ' today)
+
+    relNoteFileName = releaseNoteTemplateFolder + tempReleaseFile
+    # Search and replace related information
+    result = funModule.updateRelNote(relNoteFileName, newRomImgVer, today, RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
+    if result == 0:
+        print(CRED + 'Exit! Search and replace Release Note has something wrong!' + CEND)
+        exit()
 
     # Open text editor
-    webbrowser.open(outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt')
+    # webbrowser.open(outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt')
 
+    #
     # Compress Formal Release Folder
-
-    # Calculate the MD5 checksum of the zip file.
-
+    #
 
 if __name__ == '__main__':
     main()

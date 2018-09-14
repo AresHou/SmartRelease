@@ -2,6 +2,8 @@ import sys
 import re
 import hashlib
 import zlib
+import re
+import linecache
 from shutil import copyfile
 
 def getBMCFWInfo(fwName):
@@ -52,3 +54,56 @@ def getChecksum32(fileName):
     for eachLine in open(fileName,"rb"):
         prev = zlib.crc32(eachLine, prev)
     return "%X"%(prev & 0xFFFFFFFF)
+
+def updateRelNote(fileName, newImgVer, date, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
+
+    with open(fileName, 'r+') as file:
+        lines = file.readlines()
+        replaceTitleVer = '        MF5A AST2500(A2) BMC FW Release Version' + newImgVer + '\n'
+        replaceFWVer = 'Version: ' + newImgVer + '\n'
+        replaceDate = 'Release Date: ' + date + '\n'
+        replaceRomImachk32 = '1. rom.ima with checksum          : ' + ImgChkSum_32 + '\n'
+        replaceRomImachkMD5 = '2. rom.ima with MD5 checksum      : ' + ImgChkSum_MD5 + '\n'
+        replaceRomImaEncchkMD5 = '3. rom.ima_enc with MD5 checksum  : ' + ImgEncChkSum_MD5 + '\n'
+
+        # Refer to file ReleaseNoteTemplate.txt to inset string.
+        lines.insert(1, replaceTitleVer)
+        lines.insert(3, replaceFWVer)
+        lines.insert(4, replaceDate)
+        lines.insert(9, '\n')
+        lines.insert(12, '\n')
+        lines.insert(14, replaceRomImachk32)
+        lines.insert(15, replaceRomImachkMD5)
+        lines.insert(16, replaceRomImaEncchkMD5)
+
+        file.seek(0)
+
+        file.writelines(lines)
+
+
+    #with open(fileName, 'r+') as file:
+    #    lines = file.readlines()
+    #    for line in lines:
+    #        if relTitle in line:
+    #            matchedLine = line
+    #            replaceStr= matchedLine.replace(relTitle, newImgVer)
+    #            file.seek(0)
+    #            lines.insert(1, replaceStr)
+    #            file.writelines(lines)
+    #            break
+
+
+    #with open(fileName, 'r+') as file:
+    #    for line in file:
+    #        if relTitle in line:
+    #            matchedLine = line
+    #            file.write(matchedLine.replace(relTitle, newImgVer))
+    #            break
+
+
+    #with open(fileName, "r+") as updateRelFile:
+    #    dateSearch = re.search(relDate, updateRelFile.read())
+    #    updateRelFile.seek(int(dateSearch.start() + 4 ))
+    #    updateRelFile.write(date + '\n')
+    #    updateRelFile.close()
+
