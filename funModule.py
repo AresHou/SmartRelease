@@ -79,31 +79,3 @@ def updateRelNote(fileName, newImgVer, date, ImgChkSum_32, ImgChkSum_MD5, ImgEnc
         file.seek(0)
 
         file.writelines(lines)
-
-
-    #with open(fileName, 'r+') as file:
-    #    lines = file.readlines()
-    #    for line in lines:
-    #        if relTitle in line:
-    #            matchedLine = line
-    #            replaceStr= matchedLine.replace(relTitle, newImgVer)
-    #            file.seek(0)
-    #            lines.insert(1, replaceStr)
-    #            file.writelines(lines)
-    #            break
-
-
-    #with open(fileName, 'r+') as file:
-    #    for line in file:
-    #        if relTitle in line:
-    #            matchedLine = line
-    #            file.write(matchedLine.replace(relTitle, newImgVer))
-    #            break
-
-
-    #with open(fileName, "r+") as updateRelFile:
-    #    dateSearch = re.search(relDate, updateRelFile.read())
-    #    updateRelFile.seek(int(dateSearch.start() + 4 ))
-    #    updateRelFile.write(date + '\n')
-    #    updateRelFile.close()
-

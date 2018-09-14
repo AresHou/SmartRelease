@@ -58,7 +58,7 @@ def main():
     # Choose a zip file that users want to update.
     #
     pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
-    print('Your choise is: ' + pendingZIPFile)
+    print('Your choice is: ' + pendingZIPFile)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
     print('The folder that you want to release:')
     print(waitForUpdate_Folder)
@@ -102,7 +102,7 @@ def main():
     #
     if newRomImgVer == oldRomImgVer:
         print('\r\n')
-        print(CRED + 'Exit! The BMC firmware version on NEW and OLD birany are the same!' + CEND)
+        print(CRED + 'Exit! The BMC firmware version on NEW and OLD binary are the same!' + CEND)
         print('New: ' + newRomImgVer + '\r\n' + 'Old: ' + oldRomImgVer)
         exit()
 
@@ -113,11 +113,11 @@ def main():
     dest = waitForUpdate_Folder
     print('\r\n')
     try:
-        print('Copy new ROM images to updated folder: ' + dest)
+        print('Copy new ROM images to the folder that you want to update: ' + dest)
         shutil.copy(src + bmcROMIma, dest)
         shutil.copy(src + bmcROMImaEnc, dest)
     except:
-        print('Failed to copy!')
+        print(CRED + 'Failed to copy!' + CEND)
         exit()
 
     #
@@ -126,18 +126,32 @@ def main():
     formalReleaseFolderName = input(CBLUE + 'Enter the name of the Formal Release Folder: (Project Name + Firmware Version)' + CEND)
     os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
-    print(CGREEN)
-    print('The previous release folder: ' + pendingFolder + pendingZIPFile)
-    print('The current release folder: ' + formalReleaseFolderName)
-    print('New version of BMC firmware: ' + newRomImgVer)
-    print(CEND)
-    print(CEND + '\r\n')
+    #
+    # Convert new Firmware Version to normal expression.
+    #
+    try:
+        romVerIndex = newRomImgVer.index('=')
+        RomVerHumanReadable = newRomImgVer[romVerIndex + 1:-1]
+
+        print(CGREEN)
+        print('The previous release folder: ' + pendingFolder + pendingZIPFile)
+        print('The current release folder: ' + formalReleaseFolderName)
+        print('New version of BMC firmware: ' + RomVerHumanReadable)
+        print(CEND)
+    except:
+        print(CGREEN)
+        print('Firmware Version string in BMC ROM image is: ' + newRomImgVer)
+        print("Cannot find out character '=' in that string!")
+        print(CEND)
+        exit()
+
+    print('Get checksum information...')
 
     #
     # Calculate checksum-32 for rom.ima
     #
     RomimaChkSum32 = funModule.getChecksum32(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
-    print('rom.ima with checksum-32: ' + RomimaChkSum32)
+    print(CGREEN + 'rom.ima with checksum-32: ' + RomimaChkSum32)
 
     #
     # Calculate MD5 checksum for rom.ima and rom.ima_enc
@@ -146,6 +160,7 @@ def main():
     RomimaEncMD5ChkSum = funModule.getM5Checksum(outputFolder + formalReleaseFolderName + '/' + bmcROMImaEnc)
     print('rom.ima with MD5 checksum: ' + RomimaMD5ChkSum)
     print('rom.ima_enc with MD5 checksum: ' + RomimaEncMD5ChkSum)
+    print(CEND)
 
     #
     # fill in related release information to ReleaseNote.ext
@@ -171,6 +186,7 @@ def main():
     #
     # Compress Formal Release Folder
     #
+
 
 if __name__ == '__main__':
     main()
