@@ -27,6 +27,10 @@ CBLINK2 = '\33[6m'
 CEND = '\033[0m'
 
 def main():
+
+    smartReleaseVer = 'v0.1'
+    maintainer = 'Wen-Hua Team'
+
     # Setup related paths
     rootDir = os.getcwd()
     pendingFolder = rootDir + '/pending/'
@@ -40,12 +44,26 @@ def main():
     ReleaseNoteTemplate = 'ReleaseNoteTemplate.txt'
     tempReleaseFile = 'releaseNote_temp.txt'
 
+    #
+    # Show SmartRelease Information
+    #
+    print(CBOLD)
+    print('==================================================================')
+    print('SmartRelease Version: ' + smartReleaseVer)
+    print('Maintainer: ' + maintainer)
+    print('==================================================================')
+    print(CEND)
+
+    #
+    # Show related paths
+    #
     print ("Getting current path: " + rootDir)
     print ("pending folder path: " + pendingFolder)
     print ("output folder path: " + outputFolder)
-    print(CEND + '\r\n')
 
+    #
     # Check if folder output exists. If it does, remove output folder.
+    #
     if os.path.isdir(outputFolder):
         shutil.rmtree(outputFolder)
 
@@ -64,13 +82,12 @@ def main():
     print(CBOLD + CYELLOW)
     for root, dirs, files in os.walk(pendingFolder):
         print(files)
-
-    print(CEND + '\r\n')
+    print(CEND)
 
     #
     # Choose a zip file that users want to update.
     #
-    pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
+    pendingZIPFile = input(CBLUE + 'Enter the folder name without extension name \"zip\" that you would like to update:' + CEND)
     print('Your choice is: ' + pendingZIPFile)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
     print('The folder that you want to release:')
@@ -86,9 +103,9 @@ def main():
         releaseFolderZip.extractall(outputFolder)
 
         releaseFolderZip.close()
-        print('Decompression is finished. ' + '\r\n')
+        print('Decompression is finished. ' + '\n')
     except:
-        print(CRED + CBLINK + 'Error! Please check your pending again!' + CEND)
+        print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
         exit()
 
     #
@@ -157,13 +174,13 @@ def main():
 
         os.rename(outputFolder + pendingZIPFile, outputFolder + formalReleaseFolderName)
 
-        print(CGREEN)
+        print(CBLUE)
         print('The previous release folder: ' + pendingFolder + pendingZIPFile)
         print('The formal release folder  : ' + outputFolder + formalReleaseFolderName)
         print('New version of BMC firmware: ' + RomVerHumanReadable)
         print(CEND)
     except:
-        print(CGREEN)
+        print(CBLUE)
         print('Firmware Version string in BMC ROM image is: ' + newRomImgVer)
         print("Cannot find out character '=' in that string!")
         print(CEND)
@@ -219,8 +236,9 @@ def main():
     os.rename(releaseNoteTemplateFolder + tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
     shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
 
-    print('Please fill in and save related information to ReleaseNote.txt.')
-    print('After that. the formael release folder with extension .zip will be placed to the following path.' + '\r\n' + formalRelFolderPath)
+    print('Editor popup... Please fill in and save related information to ReleaseNote.txt.')
+    print('After that. the formael release folder with extension .zip will be placed to the following path:' + '\r\n' + formalRelFolderPath)
+    print('\n')
 
     # Open text editor
     call([EDITOR, releaseNoteTemplateFolder + 'ReleaseNote.txt'])
@@ -228,7 +246,9 @@ def main():
     #
     # Compress Formal Release Folder
     #
+    print('Compress the release folder ' + formalReleaseFolderName + '\n')
     shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
+    print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 
 
 if __name__ == '__main__':
