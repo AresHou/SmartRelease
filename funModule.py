@@ -1,3 +1,4 @@
+import os
 import sys
 import re
 import hashlib
@@ -79,3 +80,15 @@ def updateRelNote(fileName, newImgVer, date, ImgChkSum_32, ImgChkSum_MD5, ImgEnc
         file.seek(0)
 
         file.writelines(lines)
+
+def getFileAmount(PendingRootdir):
+
+    fileNum = 0
+    for lists in os.listdir(PendingRootdir):
+        sub_path = os.path.join(PendingRootdir, lists)
+        #print(sub_path)
+        if os.path.isfile(sub_path):
+            fileNum = fileNum+1
+
+    #print(fileNum)
+    return fileNum

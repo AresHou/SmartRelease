@@ -7,6 +7,9 @@ import funModule
 
 from datetime import date
 from subprocess import call
+from pathlib import Path
+
+
 
 CBOLD = '\33[1m'
 CITALIC = '\33[3m'
@@ -74,20 +77,38 @@ def main():
         print(CRED + 'ERROR! Folder \"pending\" is empty' + CEND)
         exit()
 
-    #
-    # Go through all pending folders with .zip extension and list all of them for user's choice.
-    #
-    print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
-    print('------------------------------------------------------------------------------------------------------------')
-    print(CBOLD + CYELLOW)
-    for root, dirs, files in os.walk(pendingFolder):
-        print(files)
-    print(CEND)
+    fileAmount = funModule.getFileAmount(pendingFolder)
+    print('fileAmount:' + str(fileAmount))
 
-    #
-    # Choose a zip file that users want to update.
-    #
-    pendingZIPFile = input(CBLUE + 'Enter the folder name without extension name \"zip\" that you would like to update:' + CEND)
+    if fileAmount == 1:
+        for subdir, dirs, files in os.walk(pendingFolder):
+            print(CYELLOW)
+            print(files)
+            print(CEND)
+
+        # Conver list to string
+        pendingZIPFile = ''.join(map(str, files))
+
+        # get file name without extension name
+        pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
+        print(pendingZIPFile)
+    else:
+        #
+        # Go through all pending folders with .zip extension and list all of them for user's choice.
+        #
+        print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
+        print(
+            '------------------------------------------------------------------------------------------------------------')
+        print(CBOLD + CYELLOW)
+        for root, dirs, files in os.walk(pendingFolder):
+            print(files)
+        print(CEND)
+
+        #
+        # Choose a zip file that users want to update.
+        #
+        pendingZIPFile = input(CBLUE + 'Enter the folder name without extension name \"zip\" that you would like to update:' + CEND)
+
     print('Your choice is: ' + pendingZIPFile)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
     print('The folder that you want to release:')
@@ -180,9 +201,9 @@ def main():
         print('New version of BMC firmware: ' + RomVerHumanReadable)
         print(CEND)
     except:
-        print(CBLUE)
+        print(CRED)
         print('Firmware Version string in BMC ROM image is: ' + newRomImgVer)
-        print("Cannot find out character '=' in that string!")
+        print("ERROR! Cannot find out character '=' in that string!")
         print(CEND)
         exit()
 
@@ -192,7 +213,7 @@ def main():
     # Calculate checksum-32 for rom.ima
     #
     RomimaChkSum32 = funModule.getChecksum32(outputFolder + formalReleaseFolderName + '/' + bmcROMIma)
-    print(CGREEN + 'rom.ima with checksum-32     : ' + RomimaChkSum32)
+    print(CBLUE + 'rom.ima with checksum-32     : ' + RomimaChkSum32)
 
     #
     # Calculate MD5 checksum for rom.ima and rom.ima_enc
@@ -246,7 +267,7 @@ def main():
     #
     # Compress Formal Release Folder
     #
-    print('Compress the release folder ' + formalReleaseFolderName + '\n')
+    print('Compress the release folder ' + formalReleaseFolderName + '...' +'\n')
     shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 
