@@ -2,14 +2,10 @@ import os
 import shutil
 import zipfile
 import string
-import subprocess
 import funModule
 
 from datetime import date
 from subprocess import call
-from pathlib import Path
-
-
 
 CBOLD = '\33[1m'
 CITALIC = '\33[3m'
@@ -78,41 +74,56 @@ def main():
         exit()
 
     fileAmount = funModule.getFileAmount(pendingFolder)
-    print('fileAmount:' + str(fileAmount))
+    # print('fileAmount:' + str(fileAmount))
+    print('\n')
 
-    if fileAmount == 1:
-        for subdir, dirs, files in os.walk(pendingFolder):
-            print(CYELLOW)
-            print(files)
+    if __name__ == '__main__':
+        if fileAmount == 1:
+            for subdir, dirs, files in os.walk(pendingFolder):
+                print(CYELLOW)
+                print(files)
+                print(CEND)
+
+            # Convert list to string
+            pendingZIPFile = ''.join(map(str, files))
+
+            # get file name without extension name
+            pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
+            #print(pendingZIPFile)
+        else:
+            #
+            # Go through all pending folders with .zip extension and list all of them for user's choice.
+            #
+            print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
+            print(
+                '------------------------------------------------------------------------------------------------------------')
+            print(CBOLD + CYELLOW)
+            for root, dirs, files in os.walk(pendingFolder):
+                print(files)
             print(CEND)
 
-        # Conver list to string
-        pendingZIPFile = ''.join(map(str, files))
+            #
+            # Choose a zip file that users want to update.
+            #
+            pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
 
-        # get file name without extension name
-        pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
-        print(pendingZIPFile)
-    else:
-        #
-        # Go through all pending folders with .zip extension and list all of them for user's choice.
-        #
-        print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
-        print(
-            '------------------------------------------------------------------------------------------------------------')
-        print(CBOLD + CYELLOW)
-        for root, dirs, files in os.walk(pendingFolder):
-            print(files)
-        print(CEND)
+            extensionName = os.path.splitext(pendingZIPFile)[-1]
+            # print('Extension Name: ' + extensionName)
 
-        #
-        # Choose a zip file that users want to update.
-        #
-        pendingZIPFile = input(CBLUE + 'Enter the folder name without extension name \"zip\" that you would like to update:' + CEND)
+            # Check if file name contains extenstion
+            if extensionName == '.zip':
+                # get file name without extension name
+                pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
+                #print(pendingZIPFile)
 
-    print('Your choice is: ' + pendingZIPFile)
+
+    print('Your choice is: ' + CYELLOW + pendingZIPFile + CEND)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
+    print('\n')
+
     print('The folder that you want to release:')
     print(waitForUpdate_Folder)
+    print('\n')
 
     #
     # Decompress the Release folder that users choose.
@@ -124,7 +135,7 @@ def main():
         releaseFolderZip.extractall(outputFolder)
 
         releaseFolderZip.close()
-        print('Decompression is finished. ' + '\n')
+        # print('Decompression is finished. ' + '\n')
     except:
         print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
         exit()
@@ -259,15 +270,14 @@ def main():
 
     print('Editor popup... Please fill in and save related information to ReleaseNote.txt.')
     print('After that. the formael release folder with extension .zip will be placed to the following path:' + '\r\n' + formalRelFolderPath)
-    print('\n')
 
     # Open text editor
-    call([EDITOR, releaseNoteTemplateFolder + 'ReleaseNote.txt'])
+    call([EDITOR, outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'])
 
     #
     # Compress Formal Release Folder
     #
-    print('Compress the release folder ' + formalReleaseFolderName + '...' +'\n')
+    print('Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
     shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 

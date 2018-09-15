@@ -1,11 +1,7 @@
 import os
-import sys
 import re
 import hashlib
 import zlib
-import re
-import linecache
-from shutil import copyfile
 
 def getBMCFWInfo(fwName):
     bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
