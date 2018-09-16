@@ -2,6 +2,8 @@ import os
 import re
 import hashlib
 import zlib
+from tkinter import *
+from tkinter.filedialog import askdirectory
 
 def getBMCFWInfo(fwName):
     bmcFWVersionPattern = b'\x46\x57\x5f\x56\x45\x52\x53\x49\x4f\x4e'
@@ -88,3 +90,15 @@ def getFileAmount(PendingRootdir):
 
     #print(fileNum)
     return fileNum
+
+def get_dirname():
+    Tk().withdraw()
+    print("Initializing Dialogue...\nPlease select a directory.")
+    dirname = askdirectory(initialdir=os.getcwd(),title='Please select ROM images directory')
+    if len(dirname) > 0:
+        print ("You chose %s" % dirname)
+        return dirname
+    else:
+        dirname = os.getcwd()
+        print ("\nNo directory selected - initializing with %s \n" % os.getcwd())
+        return dirname

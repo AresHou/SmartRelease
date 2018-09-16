@@ -67,66 +67,88 @@ def main():
         shutil.rmtree(outputFolder)
 
     #
+    # Delete the contents of a folder bmcRomImg.
+    #
+    print('Delete the contents of a folder bmcRomImg' + '\n')
+    os.system('rm -rf %s/*' % bmcRomImgFolder)
+
+    #
     # Check if folder pending is empty.
     #
     if len(os.listdir(pendingFolder)) == 0:
         print(CRED + 'ERROR! Folder \"pending\" is empty' + CEND)
         exit()
 
+    #
+    # Launch file browser to select BMC ROM images
+    #
+    bmcOutputDirName = funModule.get_dirname()
+    # print(bmcOutputDirName)
+
+    #
+    # Copy BMC ROM images from AMI build to specific folder "bmcRomImg"
+    #
+    try:
+        print('Copy BMC ROM images that you would like to release to ' + bmcRomImgFolder)
+        shutil.copy(bmcOutputDirName + '/' + bmcROMIma, bmcRomImgFolder)
+        shutil.copy(bmcOutputDirName + '/' + bmcROMImaEnc, bmcRomImgFolder)
+        print('Copy done.')
+    except:
+        print(CRED + 'Failed to copy BMC ROM images!' + CEND)
+        exit()
+
     fileAmount = funModule.getFileAmount(pendingFolder)
     # print('fileAmount:' + str(fileAmount))
     print('\n')
 
-    if __name__ == '__main__':
-        if fileAmount == 1:
-            for subdir, dirs, files in os.walk(pendingFolder):
-                print(CYELLOW)
-                print(files)
-                print(CEND)
+    if fileAmount == 1:
+        print('The folder in pending:')
+        for subdir, dirs, files in os.walk(pendingFolder):
+            print(CYELLOW)
+            print(files)
+            print(CEND)
 
-            # Convert list to string
-            pendingZIPFile = ''.join(map(str, files))
+        # Convert list to string
+        pendingZIPFile = ''.join(map(str, files))
 
+        # get file name without extension name
+        pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
+        #print(pendingZIPFile)
+    else:
+        #
+        # Go through all pending folders with .zip extension and list all of them for user's choice.
+        #
+        print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
+        print(
+            '------------------------------------------------------------------------------------------------------------')
+        print(CBOLD + CYELLOW)
+        for root, dirs, files in os.walk(pendingFolder):
+            print(files)
+        print(CEND)
+
+        #
+        # Choose a zip file that users want to update.
+        #
+        pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
+
+        extensionName = os.path.splitext(pendingZIPFile)[-1]
+        # print('Extension Name: ' + extensionName)
+
+        # Check if file name contains extenstion
+        if extensionName == '.zip':
             # get file name without extension name
             pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
             #print(pendingZIPFile)
-        else:
-            #
-            # Go through all pending folders with .zip extension and list all of them for user's choice.
-            #
-            print('In the folder ' + pendingFolder + ', you have the following pending zip file:')
-            print(
-                '------------------------------------------------------------------------------------------------------------')
-            print(CBOLD + CYELLOW)
-            for root, dirs, files in os.walk(pendingFolder):
-                print(files)
-            print(CEND)
+            print('Your choice is: ' + CYELLOW + pendingZIPFile + CEND)
 
-            #
-            # Choose a zip file that users want to update.
-            #
-            pendingZIPFile = input(CBLUE + 'Enter the folder name that you would like to update:' + CEND)
-
-            extensionName = os.path.splitext(pendingZIPFile)[-1]
-            # print('Extension Name: ' + extensionName)
-
-            # Check if file name contains extenstion
-            if extensionName == '.zip':
-                # get file name without extension name
-                pendingZIPFile = os.path.splitext(pendingZIPFile)[0]
-                #print(pendingZIPFile)
-
-
-    print('Your choice is: ' + CYELLOW + pendingZIPFile + CEND)
     waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
-    print('\n')
 
     print('The folder that you want to release:')
     print(waitForUpdate_Folder)
     print('\n')
 
     #
-    # Decompress the Release folder that users choose.
+    # Decompress the Release folder that users choose to folder output.
     #
     try:
         releaseFolderZip = zipfile.ZipFile(pendingFolder + pendingZIPFile + '.zip')
@@ -164,7 +186,7 @@ def main():
     #
     if newRomImgVer == oldRomImgVer:
         print('\r\n')
-        print(CRED + 'Exit! The BMC firmware version on NEW and OLD binary are the same!' + CEND)
+        print(CRED + 'Exit! The BMC firmware version between new and previous binary are the same!' + CEND)
         print('New: ' + newRomImgVer + '\r\n' + 'Old: ' + oldRomImgVer)
         # Remove all of folders in output folder.
         shutil.rmtree(outputFolder)
