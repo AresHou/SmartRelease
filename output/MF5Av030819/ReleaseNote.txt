@@ -1,0 +1,45 @@
+=====================================================================
+        MF5A AST2500(A2) BMC FW Release Version 3.08.19
+=====================================================================
+Version: 3.08.19
+Release Date: 2018-09-16
+AMI Subversion Revision: AMI SPX RR11.5
+DMTF Redfish Specification version: 1.1.0
+Api Version: 2.1.0
+Code Based: 3.85
+
+[Utility]:
+1. Yafuflash2 (version 4.16.17)
+
+[Firmware Images]:
+1. rom.ima with checksum          : D3E6D96F
+2. rom.ima with MD5 checksum      : 26f68584feb8f6589cc343f892cca707
+3. rom.ima_enc with MD5 checksum  : 0412a671a103d9765b0491a94f35b36c
+
+[Changed]:
+
+[Bug Fixed]:
+=====================================================================
+        S6A AST2500 BMC FW Release Version 1.01.00
+=====================================================================
+Version: 1.01.00
+Release Date: 2017/10/20
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : 2182526B
+2. rom.ima with MD5 checksum      : E051E53E38D88E709B5CCB475781ACE1
+3. rom.ima_enc with MD5 checksum  : 9E317A730AEAABDE190E7DB8AF1221DA
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.First EVT1 for bring up release version
+
+[Bug Fixed]:
+N/A
+
+[Known issue]:

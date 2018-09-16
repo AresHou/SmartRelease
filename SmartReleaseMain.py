@@ -3,6 +3,7 @@ import shutil
 import zipfile
 import string
 import funModule
+import subprocess
 
 from datetime import date
 from subprocess import call
@@ -302,6 +303,8 @@ def main():
     print('Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
     shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
+
+    subprocess.Popen(["xdg-open", outputFolder])
 
 
 if __name__ == '__main__':
