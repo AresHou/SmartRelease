@@ -41,8 +41,6 @@ def main():
 
     bmcROMIma = 'rom.ima'
     bmcROMImaEnc = 'rom.ima_enc'
-    # ReleaseNoteTemplate = 'ReleaseNoteTemplate.txt'
-    tempReleaseFile = 'releaseNote_temp.txt'
 
     #
     # Show SmartRelease Information
@@ -178,15 +176,10 @@ def main():
     newRomImgVer = funModule.getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
     # print(newRomImgVer)
 
-    # get rom.ima_enc information
-    # newRomImgEncVer = getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMImaEnc))
     print('\r\n')
-
     print('Get BMC firmware information from OLD ROM image...')
     oldRomImgVer = funModule.getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
     # print(oldRomImgVer)
-
-    # getBMCFWInfo(bmcROMImaEncPathName)
 
     #
     # Compare if firmware version is the same for NEW and OLD one

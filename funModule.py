@@ -1,8 +1,6 @@
 import os
-import re
 import hashlib
 import zlib
-import shutil
 from tkinter import *
 from tkinter.filedialog import askdirectory
 
