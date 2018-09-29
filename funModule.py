@@ -119,7 +119,7 @@ def genRelNote(formalRelNoteTxt, relNoteTemplateDir):
 #
 # In ReleaseNote_pattern.txt, update related release information
 #
-def modRelNote(formalRelDirPath, formalRelNoteTxt, relNoteTemplateDir, newImgVer, reldate, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
+def modRelNote(relNoteTemplateDir, newImgVer, reldate, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
     lineNumber = 0
     titleVer = 'Version '
     contentVer = 'Version: '
@@ -129,53 +129,51 @@ def modRelNote(formalRelDirPath, formalRelNoteTxt, relNoteTemplateDir, newImgVer
     contentEncChksumMD5 = '3. rom.ima_enc with MD5 checksum  : '
 
     with open(relNoteTemplateDir + 'ReleaseNote_pattern.txt', 'r+') as relPatternFile:
-        for line in relPatternFile.readlines():  # read the lines
+        for line in relPatternFile.readlines():
             lineNumber += 1
 
             titleVerIndex = line.find(titleVer) # lind.find will return index that was found. If cannot find the string, it will return -1.
             if titleVerIndex != -1:
                 updatedLine = "".join((line[:titleVerIndex + len(titleVer)], newImgVer, line[(titleVerIndex + 15):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
 
-            contentVerIndex = line.find(contentVer) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            contentVerIndex = line.find(contentVer)
             if contentVerIndex != -1:
                 updatedLine = "".join((line[:contentVerIndex + len(contentVer)], newImgVer, line[(contentVerIndex + 16):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
 
-            contentDateIndex = line.find(contentDate) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            contentDateIndex = line.find(contentDate)
             if contentDateIndex != -1:
                 updatedLine = "".join((line[:contentDateIndex + len(contentDate)], reldate, line[(contentDateIndex + 24):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
 
-            contentChksum32Index = line.find(contentChksum32) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            contentChksum32Index = line.find(contentChksum32)
             if contentChksum32Index != -1:
                 updatedLine = "".join((line[:contentChksum32Index + len(contentChksum32)], ImgChkSum_32, line[(contentChksum32Index + 44):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
 
-            contentChksumMD5Index = line.find(contentChksumMD5) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            contentChksumMD5Index = line.find(contentChksumMD5)
             if contentChksumMD5Index != -1:
                 updatedLine = "".join((line[:contentChksumMD5Index + len(contentChksumMD5)], ImgChkSum_MD5, line[(contentChksumMD5Index + 68):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
 
-            contentEncChksumMD5Index = line.find(contentEncChksumMD5) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            contentEncChksumMD5Index = line.find(contentEncChksumMD5)
             if contentEncChksumMD5Index != -1:
                 updatedLine = "".join((line[:contentEncChksumMD5Index + len(contentEncChksumMD5)], ImgEncChkSum_MD5, line[(contentEncChksumMD5Index + 92):]))
-                print(lineNumber)
-                print(updatedLine)
+                # print(lineNumber)
+                # print(updatedLine)
                 replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
-    #
-    # Combine ReleaseNote.txt and ReleaseNote_pattern.txt
-    #
+
 def replaceLine(fileName, lineNum, text):
     lines = open(fileName, 'r').readlines()
     lines[lineNum] = text
