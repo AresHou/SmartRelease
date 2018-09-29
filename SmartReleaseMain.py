@@ -41,7 +41,7 @@ def main():
 
     bmcROMIma = 'rom.ima'
     bmcROMImaEnc = 'rom.ima_enc'
-    ReleaseNoteTemplate = 'ReleaseNoteTemplate.txt'
+    # ReleaseNoteTemplate = 'ReleaseNoteTemplate.txt'
     tempReleaseFile = 'releaseNote_temp.txt'
 
     #
@@ -66,6 +66,12 @@ def main():
     #
     if os.path.isdir(outputFolder):
         shutil.rmtree(outputFolder)
+
+    #
+    # Check if ReleaseNote_pattern exists. If it does, remove ReleaseNote_pattern.txt.
+    #
+    if os.path.isdir(releaseNoteTemplateFolder):
+        os.system('rm -rf %s/*' % releaseNoteTemplateFolder)
 
     #
     # Delete the contents of a folder bmcRomImg.
@@ -261,32 +267,43 @@ def main():
     #
     # fill in related release information to ReleaseNote.ext
     #
-    src_relNote = releaseNoteTemplateFolder
-    dest_relNote = releaseNoteTemplateFolder
-    shutil.copy(src_relNote + ReleaseNoteTemplate, dest_relNote + tempReleaseFile)
+    # src_relNote = releaseNoteTemplateFolder
+    # dest_relNote = releaseNoteTemplateFolder
+    # shutil.copy(src_relNote + ReleaseNoteTemplate, dest_relNote + tempReleaseFile)
 
     # Get date
     today = str(date.today())
     # print('Today is : ' today)
 
-    relNoteFileName = releaseNoteTemplateFolder + tempReleaseFile
+    # relNoteFileName = releaseNoteTemplateFolder + tempReleaseFile
+
     # Search and replace related information
-    result = funModule.updateRelNote(relNoteFileName, RomVerHumanReadable, today, RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
-    if result == 0:
-        print(CRED + 'Exit! Search and replace Release Note has something wrong!' + CEND)
-        exit()
+    # result = funModule.updateRelNote(relNoteFileName, RomVerHumanReadable, today, RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
+    # if result == 0:
+    #    print(CRED + 'Exit! Search and replace Release Note has something wrong!' + CEND)
+    #    exit()
 
-    FormalReleaseNote = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
+    # FormalReleaseNote = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
 
-    formalRelFile = open(FormalReleaseNote)
-    tempRelFile = open(relNoteFileName, 'a+')
+    # formalRelFile = open(FormalReleaseNote)
+    # tempRelFile = open(relNoteFileName, 'a+')
 
-    shutil.copyfileobj(formalRelFile, tempRelFile)
+    # shutil.copyfileobj(formalRelFile, tempRelFile)
 
-    tempRelFile.close()
-    formalRelFile.close()
+    # tempRelFile.close()
+    # formalRelFile.close()
 
     formalRelFolderPath = outputFolder + formalReleaseFolderName
+    formalRelNoteFile = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
+
+    funModule.genRelNote(formalRelNoteFile, releaseNoteTemplateFolder)
+
+    funModule.modRelNote(formalRelFolderPath, formalRelNoteFile, releaseNoteTemplateFolder, RomVerHumanReadable, today,
+                         RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
+    exit()
+
+
+
 
     os.rename(releaseNoteTemplateFolder + tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
     shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
@@ -294,7 +311,9 @@ def main():
     print('Editor popup... Please fill in and save related information to ReleaseNote.txt.')
     print('After that. the formael release folder with extension .zip will be placed to the following path:' + '\r\n' + formalRelFolderPath)
 
+    #
     # Open text editor
+    #
     call([EDITOR, outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'])
 
     #

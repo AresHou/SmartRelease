@@ -1,0 +1,25 @@
+=====================================================================
+        MF5A AST2500 BMC FW Release Version 3.08.19
+=====================================================================
+Version: 3.08.19
+Release Date: 2018-09-29
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : D3E6D96F
+2. rom.ima with MD5 checksum      : 26f68584feb8f6589cc343f892cca707
+3. rom.ima_enc with MD5 checksum  : 0412a671a103d9765b0491a94f35b36c
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.Change project name S6Z to MF5A.
+2.When one power supply ac lost , the duty of the other one wil not be 100.
+3.Open GPIOR1 and let it be input. 
+
+[Bug Fixed]:
+   
+[Known issue]:
+

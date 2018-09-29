@@ -1,24 +1,152 @@
 =====================================================================
-        MF5A AST2500(A2) BMC FW Release Version 3.08.19
+        MF5A AST2500 BMC FW Release Version 1.07.00
 =====================================================================
-Version: 3.08.19
-Release Date: 2018-09-16
-AMI Subversion Revision: AMI SPX RR11.5
-DMTF Redfish Specification version: 1.1.0
-Api Version: 2.1.0
-Code Based: 3.85
+Version: 1.07.00
+Release Date: 2017/12/28
 
 [Utility]:
-1. Yafuflash2 (version 4.16.17)
+1. SOCFLASH (version v.test.0 )
 
 [Firmware Images]:
-1. rom.ima with checksum          : D3E6D96F
-2. rom.ima with MD5 checksum      : 26f68584feb8f6589cc343f892cca707
-3. rom.ima_enc with MD5 checksum  : 0412a671a103d9765b0491a94f35b36c
+1. rom.ima with checksum          : 1C4C1996
+2. rom.ima with MD5 checksum      : 2FB01B6081EAE489EF7FCDE0EA906EC0
+3. rom.ima_enc with MD5 checksum  : 3E5E6CEFF27A3391BC356BB5AEA3AC6C
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
 
 [Changed]:
+1.Change project name S6Z to MF5A.
+2.When one power supply ac lost , the duty of the other one wil not be 100.
+3.Open GPIOR1 and let it be input. 
 
 [Bug Fixed]:
+   
+[Known issue]:
+
+=====================================================================
+        S6A AST2500 BMC FW Release Version 1.06.00
+=====================================================================
+Version: 1.06.00
+Release Date: 2017/12/22
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : 1C498C7B
+2. rom.ima with MD5 checksum      : BB80F97B9FA26E97439FF028053929ED
+3. rom.ima_enc with MD5 checksum  : 000F5B50B05A6B8992B8923C55AD5A6E
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.Change threshold of sensor about temperature.
+2.Change setting the SPI and Controller to 3B mode for AMD platform.
+3.Modify parse method of DIMM for AMD platform.
+4.Cann't power control during BIOS FW updated.
+5.Change getting method of PSU present. 
+6.Remove gpio of GPIO_FP_ID_BTN_N.
+7.Adjust GPIO pin definitions.
+8.When another one ac loss, BMC need to setting full(100%) duty to PSU controller.
+9.When any one fan loss, BMC need to setting full(100%) duty to fans controller.
+10.Control fans LED.
+
+[Bug Fixed]:
+1.#219260 [S6Z][EVT]BMC SEL log record some Fan_SYS | Lower Non-critical going low when AC cycling 
+2.#220811 [S6Z][EVT]BMC got critical and warning message - ''MB_Inlet Temperature Going High'' during 60 hrs system stress.   
+[Known issue]:
+
+=====================================================================
+        S6A AST2500 BMC FW Release Version 1.05.00
+=====================================================================
+Version: 1.05.00
+Release Date: 2017/12/04
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : 1C67C18E
+2. rom.ima with MD5 checksum      : BC1395393B15194331D80CC3621D48B3
+3. rom.ima_enc with MD5 checksum  : 73EB1E8CA03416D93A279FF644D9EA02
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.Added retry function to threshold sensor
+2.Close redfish feature
+3.Added feature of time sync by SMI interface
+4.Modify fan table 
+5.Change sensor number abount PSU and VR
+6.Modify sensor of CPU_DIMM_HOT about DIMM
+
+[Bug Fixed]:
+1.#219860 [S6Z][EVT] There are some temperature sensors is abnormal on BMC WebUI. (Temp_CPU0, Temp_MB_Inlet, Temp_MB_Outlet) 
+2.#219859 [S6Z][EVT] The sensor status HDD18 is abnormal on BMC WebUI.  
+ 
+[Known issue]:
+
+=====================================================================
+        S6A AST2500 BMC FW Release Version 1.04.00
+=====================================================================
+Version: 1.04.00
+Release Date: 2017/11/24
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : 1C5D02A0
+2. rom.ima with MD5 checksum      : 5716FA5DCF794548E5549CBEDABEDDB7
+3. rom.ima_enc with MD5 checksum  : 933FD22CE582E0AD32D94D1433CC16DD
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.Added sensor of HDD status and HDD temperature
+2.Added function of auto fan control  
+3.Remove some sensor about PSU voltage and current
+4.Added function of Cold Redundancy
+5.Added sensor of MAX_Temp_DIMM ,and NVMeSSD_MAX
+
+[Bug Fixed]:
+1.#218992 [S6Z][EVT]Sel recorded ''[Temperature] Upper Critical - Going High'' on lots of NVMe devices during reboot cycles.  
+
+[Known issue]:
+
+
+=====================================================================
+        S6A AST2500 BMC FW Release Version 1.03.00
+=====================================================================
+Version: 1.03.00
+Release Date: 2017/11/21
+
+[Utility]:
+1. SOCFLASH (version v.test.0 )
+
+[Firmware Images]:
+1. rom.ima with checksum          : 2013A3AE
+2. rom.ima with MD5 checksum      : 3CD3A93F9BA04CCAAE317073451FB9CE
+3. rom.ima_enc with MD5 checksum  : 7CFD9CB79CD12908A0D377E774F07438
+
+[Notice]:
+1. This version is used to do EVT1 for bring up test.
+
+[Changed]:
+1.Added update fw function of bios and BMC on Web UI and yafuflash2 tool
+2.Added update fw function of CPLD on yafuflash2 tool
+3.Added sensor of FAN speed
+4.Added sensor of PSU
+
+[Bug Fixed]:
+1.#218588 [S6Z][EVT]BMC display critical error message ''PSU0 Vout'' ''PSU0 Vin'' and ''PSU0 Fan Speed'' when power on system. 
+ 
+[Known issue]:
+1.Fan speed function can not support
 =====================================================================
         S6A AST2500 BMC FW Release Version 1.01.00
 =====================================================================

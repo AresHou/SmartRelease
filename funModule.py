@@ -2,6 +2,7 @@ import os
 import re
 import hashlib
 import zlib
+import shutil
 from tkinter import *
 from tkinter.filedialog import askdirectory
 
@@ -54,31 +55,6 @@ def getChecksum32(fileName):
         prev = zlib.crc32(eachLine, prev)
     return "%X"%(prev & 0xFFFFFFFF)
 
-def updateRelNote(fileName, newImgVer, date, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
-
-    with open(fileName, 'r+') as file:
-        lines = file.readlines()
-        replaceTitleVer = '        MF5A AST2500(A2) BMC FW Release Version ' + newImgVer + '\n'
-        replaceFWVer = 'Version: ' + newImgVer + '\n'
-        replaceDate = 'Release Date: ' + date + '\n'
-        replaceRomImachk32 = '1. rom.ima with checksum          : ' + ImgChkSum_32 + '\n'
-        replaceRomImachkMD5 = '2. rom.ima with MD5 checksum      : ' + ImgChkSum_MD5 + '\n'
-        replaceRomImaEncchkMD5 = '3. rom.ima_enc with MD5 checksum  : ' + ImgEncChkSum_MD5 + '\n'
-
-        # Refer to file ReleaseNoteTemplate.txt to inset string.
-        lines.insert(1, replaceTitleVer)
-        lines.insert(3, replaceFWVer)
-        lines.insert(4, replaceDate)
-        lines.insert(9, '\n')
-        lines.insert(12, '\n')
-        lines.insert(14, replaceRomImachk32)
-        lines.insert(15, replaceRomImachkMD5)
-        lines.insert(16, replaceRomImaEncchkMD5)
-
-        file.seek(0)
-
-        file.writelines(lines)
-
 def getFileAmount(PendingRootdir):
 
     fileNum = 0
@@ -102,3 +78,107 @@ def get_dirname():
         dirname = os.getcwd()
         print ("\nNo directory selected - initializing with %s \n" % os.getcwd())
         return dirname
+
+#
+# Copy release format pattern from ReleaseNote.txt to ReleaseNote_pattern.txt
+#
+def genRelNote(formalRelNoteTxt, relNoteTemplateDir):
+
+    equal_pattern = '=====+'
+    equal_count = 0
+
+    fp_relNote_txt = open(formalRelNoteTxt, 'r')
+    for line in fp_relNote_txt:
+
+        fp_relNote_txt_pattern = open(relNoteTemplateDir + 'ReleaseNote_pattern.txt', 'a')
+
+        # if re.findall cannot find string, the equal_symble will be empty.
+        equal_symble = re.findall(equal_pattern, line)
+        # print(equal_symble)
+
+        # convert list to string.
+        equal_symble = ''.join(equal_symble)
+
+        if equal_symble == '':
+            equal_symble = 'skip'
+
+        # remove new line from line.
+        line_no_NL = line.rstrip("\n")
+
+        if line_no_NL == equal_symble:
+            equal_count = equal_count + 1
+
+        if equal_count == 3:
+            break
+
+        fp_relNote_txt_pattern.write(line)
+
+    fp_relNote_txt.close()
+    fp_relNote_txt_pattern.close()
+
+#
+# In ReleaseNote_pattern.txt, update related release information
+#
+def modRelNote(formalRelDirPath, formalRelNoteTxt, relNoteTemplateDir, newImgVer, reldate, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
+    lineNumber = 0
+    titleVer = 'Version '
+    contentVer = 'Version: '
+    contentDate = 'Release Date: '
+    contentChksum32 = '1. rom.ima with checksum          : '
+    contentChksumMD5 = '2. rom.ima with MD5 checksum      : '
+    contentEncChksumMD5 = '3. rom.ima_enc with MD5 checksum  : '
+
+    with open(relNoteTemplateDir + 'ReleaseNote_pattern.txt', 'r+') as relPatternFile:
+        for line in relPatternFile.readlines():  # read the lines
+            lineNumber += 1
+
+            titleVerIndex = line.find(titleVer) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if titleVerIndex != -1:
+                updatedLine = "".join((line[:titleVerIndex + len(titleVer)], newImgVer, line[(titleVerIndex + 15):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+
+            contentVerIndex = line.find(contentVer) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if contentVerIndex != -1:
+                updatedLine = "".join((line[:contentVerIndex + len(contentVer)], newImgVer, line[(contentVerIndex + 16):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+
+            contentDateIndex = line.find(contentDate) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if contentDateIndex != -1:
+                updatedLine = "".join((line[:contentDateIndex + len(contentDate)], reldate, line[(contentDateIndex + 24):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+
+            contentChksum32Index = line.find(contentChksum32) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if contentChksum32Index != -1:
+                updatedLine = "".join((line[:contentChksum32Index + len(contentChksum32)], ImgChkSum_32, line[(contentChksum32Index + 44):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+
+            contentChksumMD5Index = line.find(contentChksumMD5) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if contentChksumMD5Index != -1:
+                updatedLine = "".join((line[:contentChksumMD5Index + len(contentChksumMD5)], ImgChkSum_MD5, line[(contentChksumMD5Index + 68):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+
+            contentEncChksumMD5Index = line.find(contentEncChksumMD5) # lind.find will return index that was found. If cannot find the string, it will return -1.
+            if contentEncChksumMD5Index != -1:
+                updatedLine = "".join((line[:contentEncChksumMD5Index + len(contentEncChksumMD5)], ImgEncChkSum_MD5, line[(contentEncChksumMD5Index + 92):]))
+                print(lineNumber)
+                print(updatedLine)
+                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+    #
+    # Combine ReleaseNote.txt and ReleaseNote_pattern.txt
+    #
+def replaceLine(fileName, lineNum, text):
+    lines = open(fileName, 'r').readlines()
+    lines[lineNum] = text
+    out = open(fileName, 'w')
+    out.writelines(lines)
+    out.close()
