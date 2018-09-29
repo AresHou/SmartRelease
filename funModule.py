@@ -80,55 +80,18 @@ def get_dirname():
         return dirname
 
 #
-# Copy release format pattern from ReleaseNote.txt to ReleaseNote_pattern.txt
-#
-def genRelNote(formalRelNoteTxt, relNoteTemplateDir):
-
-    equal_pattern = '=====+'
-    equal_count = 0
-
-    fp_relNote_txt = open(formalRelNoteTxt, 'r')
-    for line in fp_relNote_txt:
-
-        fp_relNote_txt_pattern = open(relNoteTemplateDir + 'ReleaseNote_pattern.txt', 'a')
-
-        # if re.findall cannot find string, the equal_symble will be empty.
-        equal_symble = re.findall(equal_pattern, line)
-        # print(equal_symble)
-
-        # convert list to string.
-        equal_symble = ''.join(equal_symble)
-
-        if equal_symble == '':
-            equal_symble = 'skip'
-
-        # remove new line from line.
-        line_no_NL = line.rstrip("\n")
-
-        if line_no_NL == equal_symble:
-            equal_count = equal_count + 1
-
-        if equal_count == 3:
-            break
-
-        fp_relNote_txt_pattern.write(line)
-
-    fp_relNote_txt.close()
-    fp_relNote_txt_pattern.close()
-
-#
 # In ReleaseNote_pattern.txt, update related release information
 #
-def modRelNote(relNoteTemplateDir, newImgVer, reldate, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
+def modRelNote(relNoteTempFile, newImgVer, reldate, ImgChkSum_32, ImgChkSum_MD5, ImgEncChkSum_MD5):
     lineNumber = 0
     titleVer = 'Version '
-    contentVer = 'Version: '
+    contentVer = 'BMC Firmware Version: '
     contentDate = 'Release Date: '
     contentChksum32 = '1. rom.ima with checksum          : '
     contentChksumMD5 = '2. rom.ima with MD5 checksum      : '
     contentEncChksumMD5 = '3. rom.ima_enc with MD5 checksum  : '
 
-    with open(relNoteTemplateDir + 'ReleaseNote_pattern.txt', 'r+') as relPatternFile:
+    with open(relNoteTempFile, 'r+') as relPatternFile:
         for line in relPatternFile.readlines():
             lineNumber += 1
 
@@ -137,42 +100,42 @@ def modRelNote(relNoteTemplateDir, newImgVer, reldate, ImgChkSum_32, ImgChkSum_M
                 updatedLine = "".join((line[:titleVerIndex + len(titleVer)], newImgVer, line[(titleVerIndex + 15):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine)
 
             contentVerIndex = line.find(contentVer)
             if contentVerIndex != -1:
-                updatedLine = "".join((line[:contentVerIndex + len(contentVer)], newImgVer, line[(contentVerIndex + 16):]))
+                updatedLine = "".join((line[:contentVerIndex + len(contentVer)], newImgVer, line[(contentVerIndex + 29):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine)
 
             contentDateIndex = line.find(contentDate)
             if contentDateIndex != -1:
                 updatedLine = "".join((line[:contentDateIndex + len(contentDate)], reldate, line[(contentDateIndex + 24):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine)
 
             contentChksum32Index = line.find(contentChksum32)
             if contentChksum32Index != -1:
                 updatedLine = "".join((line[:contentChksum32Index + len(contentChksum32)], ImgChkSum_32, line[(contentChksum32Index + 44):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine)
 
             contentChksumMD5Index = line.find(contentChksumMD5)
             if contentChksumMD5Index != -1:
                 updatedLine = "".join((line[:contentChksumMD5Index + len(contentChksumMD5)], ImgChkSum_MD5, line[(contentChksumMD5Index + 68):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine)
 
             contentEncChksumMD5Index = line.find(contentEncChksumMD5)
             if contentEncChksumMD5Index != -1:
                 updatedLine = "".join((line[:contentEncChksumMD5Index + len(contentEncChksumMD5)], ImgEncChkSum_MD5, line[(contentEncChksumMD5Index + 92):]))
                 # print(lineNumber)
                 # print(updatedLine)
-                replaceLine(relNoteTemplateDir + 'ReleaseNote_pattern.txt', lineNumber - 1, updatedLine)
+                replaceLine(relNoteTempFile, lineNumber - 1, updatedLine + '\n')
 
 def replaceLine(fileName, lineNum, text):
     lines = open(fileName, 'r').readlines()

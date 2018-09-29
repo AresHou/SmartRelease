@@ -1,0 +1,22 @@
+=====================================================================
+        MF5A AST2500(A2) BMC FW Release Version 3.05.19
+=====================================================================
+BMC Firmware Version: 3.05.19
+Release Date: 2018.08.20
+AMI Subversion Revision: AMI SPX RR11.5
+DMTF Redfish Specification version: 1.1.0
+Api Version: 2.1.0
+Code Based: 3.85
+
+[Utility]:
+1. Yafuflash2 (version 4.16.17)
+
+[Firmware Images]:
+1. rom.ima with checksum          : 1BC9D4C3
+2. rom.ima with MD5 checksum      : 26F68584FEB8F6589CC343F892CCA707
+3. rom.ima_enc with MD5 checksum  : 0412A671A103D9765B0491A94F35B36C
+
+[Changed]:
+
+[Bug Fixed]:
+

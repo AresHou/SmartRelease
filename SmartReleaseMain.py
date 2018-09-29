@@ -68,10 +68,10 @@ def main():
         shutil.rmtree(outputFolder)
 
     #
-    # Check if ReleaseNote_pattern exists. If it does, remove ReleaseNote_pattern.txt.
+    # Check if ReleaseNote.txt exists. If it does, remove ReleaseNote.txt.
     #
     if os.path.isdir(releaseNoteTemplateFolder):
-        os.system('rm -rf %s/*' % releaseNoteTemplateFolder)
+        os.system('rm -rf %s/*' % releaseNoteTemplateFolder + 'ReleaseNote.txt')
 
     #
     # Delete the contents of a folder bmcRomImg.
@@ -269,31 +269,30 @@ def main():
     # fill in related release information to ReleaseNote.ext
     #
     formalRelFolderPath = outputFolder + formalReleaseFolderName
-    formalRelNoteFile = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
 
-    funModule.genRelNote(formalRelNoteFile, releaseNoteTemplateFolder)
-
-    funModule.modRelNote(releaseNoteTemplateFolder, RomVerHumanReadable, today,
+    shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote_pattern.txt', releaseNoteTemplateFolder + 'ReleaseNote.txt')
+    relNoteFileTemp = releaseNoteTemplateFolder + 'ReleaseNote.txt'
+    funModule.modRelNote(relNoteFileTemp, RomVerHumanReadable, today,
                          RomimaChkSum32, RomimaMD5ChkSum, RomimaEncMD5ChkSum)
 
     #
     # Combine ReleaseNote.txt and ReleaseNote_pattern.txt
     #
     formalReleaseNote = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
-    PatterReleaseFile = releaseNoteTemplateFolder + 'ReleaseNote_pattern.txt'
+    tempReleaseFile = releaseNoteTemplateFolder + 'ReleaseNote.txt'
 
     print('Formal release file: ' + formalReleaseNote)
-    print('Pattern release file: ' + PatterReleaseFile)
+    print('Pattern release file: ' + tempReleaseFile)
 
     formalRelFile = open(formalReleaseNote)
-    patternRelFile = open(PatterReleaseFile, 'a+')
+    patternRelFile = open(tempReleaseFile, 'a+')
 
     shutil.copyfileobj(formalRelFile, patternRelFile)
 
     patternRelFile.close()
     formalRelFile.close()
 
-    os.rename(PatterReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
+    os.rename(tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
     shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
 
     print('Editor popup... Please fill in and save related information to ReleaseNote.txt.')
