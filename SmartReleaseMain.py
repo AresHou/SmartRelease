@@ -4,6 +4,7 @@ import zipfile
 import string
 import funModule
 import subprocess
+import time
 
 from datetime import date
 from subprocess import call
@@ -155,14 +156,17 @@ def main():
     #
     # Decompress the Release folder that users choose to folder output.
     #
+    unzipFolder = pendingFolder + pendingZIPFile + '.zip'
     try:
-        releaseFolderZip = zipfile.ZipFile(pendingFolder + pendingZIPFile + '.zip')
+        releaseFolderZip = zipfile.ZipFile(unzipFolder, 'r')
 
-        # After decompressing, put the file to folder output.
-        releaseFolderZip.extractall(outputFolder + pendingZIPFile)
+        print('Wait! decompress to folder ' + outputFolder + '...')
+
+        # After decompressing, put the files to folder output.
+        releaseFolderZip.extractall(outputFolder)
 
         releaseFolderZip.close()
-        # print('Decompression is finished. ' + '\n')
+        print('Decompression is finished. ' + '\n')
     except:
         print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
         exit()
@@ -299,7 +303,8 @@ def main():
     #
     # Compress Formal Release Folder
     #
-    print('Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
+    print('\n')
+    print('Wait! Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
     shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 
