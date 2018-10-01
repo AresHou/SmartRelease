@@ -159,7 +159,7 @@ def main():
         releaseFolderZip = zipfile.ZipFile(pendingFolder + pendingZIPFile + '.zip')
 
         # After decompressing, put the file to folder output.
-        releaseFolderZip.extractall(outputFolder)
+        releaseFolderZip.extractall(outputFolder + pendingZIPFile)
 
         releaseFolderZip.close()
         # print('Decompression is finished. ' + '\n')
@@ -172,12 +172,12 @@ def main():
     #
 
     # Search Firmware Version in BMC ROM image and get rom.ima information
-    print('Get BMC firmware information from NEW ROM image...')
+    print('Get BMC firmware information from NEW ROM image...(Which is from BMC codebase folder /Build/output/)')
     newRomImgVer = funModule.getBMCFWInfo("%s%s" % (bmcRomImgFolder, bmcROMIma))
     # print(newRomImgVer)
 
     print('\r\n')
-    print('Get BMC firmware information from OLD ROM image...')
+    print('Get BMC firmware information from OLD ROM image...(Which is from previous release.)')
     oldRomImgVer = funModule.getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
     # print(oldRomImgVer)
 
