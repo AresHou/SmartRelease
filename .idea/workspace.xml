@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6e81a19-4bb6-438e-be46-bd8bf053594a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SmartReleaseMain.py" afterPath="$PROJECT_DIR$/SmartReleaseMain.py" />
     </list>
@@ -25,8 +24,8 @@
       <file leaf-file-name="SmartReleaseMain.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SmartReleaseMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
-              <caret line="317" column="4" lean-forward="false" selection-start-line="317" selection-start-column="4" selection-end-line="317" selection-end-column="4" />
+            <state relative-caret-position="250">
+              <caret line="290" column="32" lean-forward="false" selection-start-line="290" selection-start-column="32" selection-end-line="290" selection-end-column="32" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -37,7 +36,7 @@
       <file leaf-file-name="funModule.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/funModule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
+            <state relative-caret-position="216">
               <caret line="15" column="11" lean-forward="false" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -62,7 +61,6 @@
       <find>The formal release folder</find>
       <find>NEW and OLD</find>
       <find>releaseNoteTemplateFolder</find>
-      <find>formalRelFolderPath</find>
       <find>formalReleaseFolderName</find>
       <find>formalRelFile</find>
       <find>relNoteFileName</find>
@@ -75,6 +73,10 @@
       <find>tempReleaseFile</find>
       <find>pendingZIPFile</find>
       <find>waitForUpdate_Folder</find>
+      <find>formalRelFolderPath</find>
+      <find>CRED</find>
+      <find>wait</find>
+      <find>Pattern release file</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -360,7 +362,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SmartReleaseMain.py</url>
-          <line>280</line>
+          <line>279</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -665,16 +667,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/funModule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="15" column="11" lean-forward="false" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.5/zipfile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
@@ -683,10 +675,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/funModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="15" column="11" lean-forward="false" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SmartReleaseMain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
-          <caret line="317" column="4" lean-forward="false" selection-start-line="317" selection-start-column="4" selection-end-line="317" selection-end-column="4" />
+        <state relative-caret-position="250">
+          <caret line="290" column="32" lean-forward="false" selection-start-line="290" selection-start-column="32" selection-end-line="290" selection-end-column="32" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

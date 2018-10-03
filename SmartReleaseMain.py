@@ -163,22 +163,21 @@ def main():
     try:
         releaseFolderZip = zipfile.ZipFile(unzipFile, 'r')
 
-        print('Wait! decompress previous zip file to folder ' + outputFolder)
+        print('Please wait a monent... It is decompressing previous zip file to folder ' + outputFolder)
 
         # After decompressing, put the files to folder output.
         releaseFolderZip.extractall(outputFolder)
 
         releaseFolderZip.close()
 
+        if not os.path.isdir(outputFolder + pendingZIPFile):
+            print(CRED + CBLINK + 'The path \" '+ outputFolder + pendingZIPFile + '\" is not exist !' + CEND)
+            exit()
+
         print('Decompression is finished. ' + '\n')
 
-        # with zipfile.ZipFile(unzipFile) as releaseFolderZip:
-        #    for elem in releaseFolderZip.namelist():
-        #        releaseFolderZip.extract(elem, waitForUpdateDir)
-
-        # releaseFolderZip.close()
     except:
-        print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
+        print(CRED + CBLINK + 'Error! Please check your folder \"pending\" or ' + outputFolder + pendingZIPFile + ' again!' + CEND)
         exit()
 
     #
@@ -288,8 +287,8 @@ def main():
     formalReleaseNote = outputFolder + formalReleaseFolderName + '/' + 'ReleaseNote.txt'
     tempReleaseFile = releaseNoteTemplateFolder + 'ReleaseNote.txt'
 
-    print('Formal release file: ' + formalReleaseNote)
-    print('Pattern release file: ' + tempReleaseFile)
+    print('Formal release note file: ' + formalReleaseNote)
+    print('Pattern release note file: ' + tempReleaseFile)
 
     formalRelFile = open(formalReleaseNote)
     patternRelFile = open(tempReleaseFile, 'a+')
@@ -302,6 +301,7 @@ def main():
     os.rename(tempReleaseFile, releaseNoteTemplateFolder + 'ReleaseNote.txt')
     shutil.copy2(releaseNoteTemplateFolder + 'ReleaseNote.txt', formalRelFolderPath)
 
+    print('\n')
     print('Editor popup... Please fill in and save related information to ReleaseNote.txt.')
     print('After that. the formael release folder with extension .zip will be placed to the following path:' + '\r\n' + formalRelFolderPath)
 
@@ -314,7 +314,7 @@ def main():
     # Compress Formal Release Folder
     #
     print('\n')
-    print('Wait! Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
+    print('Please wait a moment... It is Ccmpressing the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
     shutil.make_archive(formalRelFolderPath, 'zip', outputFolder, formalReleaseFolderName)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 
