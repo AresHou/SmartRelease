@@ -171,6 +171,12 @@ def main():
         releaseFolderZip.close()
 
         print('Decompression is finished. ' + '\n')
+
+        # with zipfile.ZipFile(unzipFile) as releaseFolderZip:
+        #    for elem in releaseFolderZip.namelist():
+        #        releaseFolderZip.extract(elem, waitForUpdateDir)
+
+        # releaseFolderZip.close()
     except:
         print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
         exit()
@@ -309,7 +315,7 @@ def main():
     #
     print('\n')
     print('Wait! Compress the release folder ' + '\"' + formalReleaseFolderName + '\"' + ' ...' +'\n')
-    shutil.make_archive(formalRelFolderPath, 'zip', formalRelFolderPath)
+    shutil.make_archive(formalRelFolderPath, 'zip', outputFolder, formalReleaseFolderName)
     print(CGREEN + 'Complete! Please go to path ' + outputFolder + ' and get folder \"' + formalReleaseFolderName + '.zip' + '\"' + CEND)
 
     subprocess.Popen(["xdg-open", outputFolder])
