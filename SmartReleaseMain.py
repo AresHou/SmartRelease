@@ -92,7 +92,7 @@ def main():
     # print(bmcOutputDirName)
 
     #
-    # Copy BMC ROM images from AMI build to specific folder "bmcRomImg"
+    # Copy BMC ROM images from AMI build folder 'Build/output/' to specific folder "bmcRomImg"
     #
     try:
         print('Copy BMC ROM images that you would like to release to ' + bmcRomImgFolder)
@@ -147,25 +147,29 @@ def main():
             #print(pendingZIPFile)
             print('Your choice is: ' + CYELLOW + pendingZIPFile + CEND)
 
-    waitForUpdate_Folder = outputFolder + pendingZIPFile + '/'
+    waitForUpdateDir = outputFolder + pendingZIPFile + '/'
 
-    print('The folder that you want to release:')
-    print(waitForUpdate_Folder)
+    print('The folder that you want to update:')
+    print(waitForUpdateDir)
     print('\n')
 
-    #
-    # Decompress the Release folder that users choose to folder output.
-    #
-    unzipFolder = pendingFolder + pendingZIPFile + '.zip'
-    try:
-        releaseFolderZip = zipfile.ZipFile(unzipFolder, 'r')
+    if not os.path.exists(outputFolder):
+        os.mkdir(outputFolder)
 
-        print('Wait! decompress to folder ' + outputFolder + '...')
+    #
+    # Decompress for the previous release file with zip.
+    #
+    unzipFile = pendingFolder + pendingZIPFile + '.zip'
+    try:
+        releaseFolderZip = zipfile.ZipFile(unzipFile, 'r')
+
+        print('Wait! decompress previous zip file to folder ' + outputFolder)
 
         # After decompressing, put the files to folder output.
         releaseFolderZip.extractall(outputFolder)
 
         releaseFolderZip.close()
+
         print('Decompression is finished. ' + '\n')
     except:
         print(CRED + CBLINK + 'Error! Please check your folder \"pending\" again!' + CEND)
@@ -182,7 +186,7 @@ def main():
 
     print('\r\n')
     print('Get BMC firmware information from OLD ROM image...(Which is from previous release.)')
-    oldRomImgVer = funModule.getBMCFWInfo("%s%s" % (waitForUpdate_Folder, bmcROMIma))
+    oldRomImgVer = funModule.getBMCFWInfo("%s%s" % (waitForUpdateDir, bmcROMIma))
     # print(oldRomImgVer)
 
     #
@@ -200,7 +204,7 @@ def main():
     # copy new BMC ROM image to the folder that users want to compress with zip
     #
     src = bmcRomImgFolder
-    dest = waitForUpdate_Folder
+    dest = waitForUpdateDir
     print('\r\n')
     try:
         print('Copy new ROM images to the folder that you want to update: ' + dest)
